@@ -2,18 +2,15 @@ import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser, reset } from '../store/authSlice'
-import { useTheme } from '../context/ThemeContext'
 import toast from 'react-hot-toast'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiMenu, FiX, FiLogOut, FiPlus, FiBarChart2, FiGrid, FiMessageSquare, FiSun, FiMoon, FiUser } from 'react-icons/fi'
-import { FaGlasses } from 'react-icons/fa'
+import { Menu, X, LogOut, Plus, BarChart3, LayoutDashboard, MessageSquare, User, Glasses } from 'lucide-react'
 
 const Header = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()
   const { user } = useSelector((state) => state.auth)
-  const { theme, toggleTheme } = useTheme()
   const [isOpen, setIsOpen] = useState(false)
 
   const handleLogout = () => {
@@ -27,25 +24,25 @@ const Header = () => {
   const isActive = (path) => location.pathname === path
 
   const navLinks = [
-    { to: '/reviews', label: 'Reviews', icon: <FiMessageSquare className="w-4 h-4" />, public: true },
-    { to: '/create-review', label: 'Write Review', icon: <FiPlus className="w-4 h-4" />, public: false },
-    { to: '/my-reviews', label: 'My Reviews', icon: <FiUser className="w-4 h-4" />, public: false },
-    { to: '/analytics', label: 'Analytics', icon: <FiBarChart2 className="w-4 h-4" />, public: false },
-    { to: '/dashboard', label: 'Dashboard', icon: <FiGrid className="w-4 h-4" />, public: false },
+    { to: '/reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" />, public: true },
+    { to: '/create-review', label: 'Write Review', icon: <Plus className="w-4 h-4" />, public: false },
+    { to: '/my-reviews', label: 'My Reviews', icon: <User className="w-4 h-4" />, public: false },
+    { to: '/analytics', label: 'Analytics', icon: <BarChart3 className="w-4 h-4" />, public: false },
+    { to: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" />, public: false },
   ]
 
   const filteredLinks = navLinks.filter(link => link.public || user)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-gray-950/80 backdrop-blur-md text-white">
+    <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-[#09090B]/80 backdrop-blur-md text-[#FAFAFA]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-md shadow-purple-500/20 group-hover:scale-105 transition-transform duration-200">
-              <FaGlasses className="h-5 w-5 text-white" />
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-[#111113] group-hover:border-white/20 transition-all duration-200">
+              <Glasses className="h-5 w-5 text-blue-500" />
             </div>
-            <span className="font-display text-xl font-bold tracking-tight bg-gradient-to-r from-white via-gray-200 to-purple-400 bg-clip-text text-transparent">
-              Meta Reviews
+            <span className="font-display text-lg font-bold tracking-tight text-[#FAFAFA]">
+              Meta Glasses Reviews
             </span>
           </Link>
 
@@ -55,8 +52,8 @@ const Header = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 hover:text-purple-400 ${
-                  isActive(link.to) ? 'text-purple-400' : 'text-gray-300'
+                className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 hover:text-[#FAFAFA] ${
+                  isActive(link.to) ? 'text-[#FAFAFA]' : 'text-[#A1A1AA]'
                 }`}
               >
                 {link.icon}
@@ -64,7 +61,7 @@ const Header = () => {
                 {isActive(link.to) && (
                   <motion.div
                     layoutId="activeNavIndicator"
-                    className="absolute bottom-0 left-4 right-4 h-0.5 bg-purple-500"
+                    className="absolute bottom-0 left-4 right-4 h-[2px] bg-blue-600"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -73,43 +70,35 @@ const Header = () => {
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-white/10 text-gray-300 hover:text-purple-400 transition-colors cursor-pointer"
-              aria-label="Toggle Theme"
-            >
-              {theme === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
-            </button>
-
             {user ? (
-              <div className="flex items-center gap-3 border-l border-white/10 pl-4">
+              <div className="flex items-center gap-3 border-l border-white/[0.08] pl-4">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center font-semibold text-sm border border-purple-400/30">
+                  <div className="h-7 w-7 rounded-full bg-[#18181B] border border-white/10 flex items-center justify-center font-semibold text-xs text-[#FAFAFA]">
                     {user.name?.charAt(0).toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium text-gray-200 hidden lg:block">
+                  <span className="text-sm font-medium text-[#A1A1AA] hidden lg:block">
                     {user.name}
                   </span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md shadow-purple-950/20 transition-all duration-200 hover:scale-105 cursor-pointer"
+                  className="flex items-center gap-1.5 border border-white/10 bg-[#111113] hover:bg-[#18181B] text-[#FAFAFA] px-3.5 py-1.5 rounded-xl text-xs font-semibold shadow-sm transition-all hover:scale-[1.02] cursor-pointer"
                 >
-                  <FiLogOut className="w-3.5 h-3.5" />
+                  <LogOut className="w-3.5 h-3.5" />
                   Logout
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 border-l border-white/10 pl-4">
+              <div className="flex items-center gap-2 border-l border-white/[0.08] pl-4">
                 <Link
                   to="/login"
-                  className="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/5 transition-all"
+                  className="text-sm font-medium text-[#A1A1AA] hover:text-[#FAFAFA] px-3.5 py-2 rounded-lg hover:bg-white/[0.04] transition-all"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1.5 rounded-lg text-sm font-semibold shadow-md shadow-purple-950/20 transition-all hover:scale-105"
+                  className="bg-blue-600 hover:bg-blue-700 text-[#FAFAFA] px-4.5 py-2 rounded-xl text-sm font-semibold shadow-md shadow-blue-900/10 transition-all hover:scale-[1.02]"
                 >
                   Get Started
                 </Link>
@@ -120,16 +109,10 @@ const Header = () => {
           {/* Mobile Actions and Hamburger Toggle */}
           <div className="flex md:hidden items-center gap-2">
             <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-white/10 text-gray-300 transition-colors cursor-pointer"
-            >
-              {theme === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
-            </button>
-            <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-lg hover:bg-white/10 text-gray-300 transition-colors cursor-pointer"
+              className="p-2 rounded-lg border border-white/5 bg-[#111113] text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors cursor-pointer"
             >
-              {isOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -142,7 +125,7 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-white/10 bg-gray-950/95 overflow-hidden"
+            className="md:hidden border-t border-white/[0.08] bg-[#09090B] overflow-hidden"
           >
             <div className="px-4 py-4 space-y-2">
               {filteredLinks.map((link) => (
@@ -150,10 +133,10 @@ const Header = () => {
                   key={link.to}
                   to={link.to}
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-2.5 px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                     isActive(link.to)
-                      ? 'bg-purple-500/20 text-purple-400 border-l-2 border-purple-500'
-                      : 'text-gray-300 hover:bg-white/5'
+                      ? 'bg-blue-500/10 text-blue-500'
+                      : 'text-[#A1A1AA] hover:bg-white/[0.04]'
                   }`}
                 >
                   {link.icon}
@@ -161,23 +144,23 @@ const Header = () => {
                 </Link>
               ))}
 
-              <div className="pt-4 border-t border-white/10 mt-4 space-y-3">
+              <div className="pt-4 border-t border-white/[0.08] mt-4 space-y-3">
                 {user ? (
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 px-4 py-1">
-                      <div className="h-9 w-9 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center font-semibold text-sm">
+                      <div className="h-9 w-9 rounded-full bg-[#18181B] border border-white/10 flex items-center justify-center font-semibold text-sm">
                         {user.name?.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <div className="text-sm font-semibold text-white">{user.name}</div>
-                        <div className="text-xs text-gray-400">{user.email}</div>
+                        <div className="text-sm font-semibold text-[#FAFAFA]">{user.name}</div>
+                        <div className="text-xs text-[#A1A1AA]">{user.email}</div>
                       </div>
                     </div>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white py-2.5 rounded-lg text-sm font-semibold cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 border border-white/10 bg-[#111113] hover:bg-[#18181B] text-[#FAFAFA] py-2.5 rounded-xl text-sm font-semibold cursor-pointer"
                     >
-                      <FiLogOut className="w-4 h-4" />
+                      <LogOut className="w-4 h-4" />
                       Logout
                     </button>
                   </div>
@@ -186,14 +169,14 @@ const Header = () => {
                     <Link
                       to="/login"
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-center text-sm font-medium text-gray-300 hover:text-white py-2.5 rounded-lg bg-white/5"
+                      className="flex items-center justify-center text-sm font-medium text-[#A1A1AA] hover:text-[#FAFAFA] py-2.5 rounded-xl bg-white/[0.04]"
                     >
                       Login
                     </Link>
                     <Link
                       to="/register"
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white py-2.5 rounded-lg text-sm font-semibold"
+                      className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-[#FAFAFA] py-2.5 rounded-xl text-sm font-semibold"
                     >
                       Register
                     </Link>
