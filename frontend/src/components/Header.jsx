@@ -1,122 +1,209 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser, reset } from '../store/authSlice'
+import { useTheme } from '../context/ThemeContext'
 import toast from 'react-hot-toast'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FiMenu, FiX, FiLogOut, FiPlus, FiBarChart2, FiGrid, FiMessageSquare, FiSun, FiMoon, FiUser } from 'react-icons/fi'
+import { FaGlasses } from 'react-icons/fa'
 
 const Header = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const location = useLocation()
   const { user } = useSelector((state) => state.auth)
+  const { theme, toggleTheme } = useTheme()
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleLogout = () => {
     dispatch(logoutUser())
     dispatch(reset())
     toast.success('Logged out successfully!')
     navigate('/')
+    setIsOpen(false)
   }
 
+  const isActive = (path) => location.pathname === path
+
+  const navLinks = [
+    { to: '/reviews', label: 'Reviews', icon: <FiMessageSquare className="w-4 h-4" />, public: true },
+    { to: '/create-review', label: 'Write Review', icon: <FiPlus className="w-4 h-4" />, public: false },
+    { to: '/my-reviews', label: 'My Reviews', icon: <FiUser className="w-4 h-4" />, public: false },
+    { to: '/analytics', label: 'Analytics', icon: <FiBarChart2 className="w-4 h-4" />, public: false },
+    { to: '/dashboard', label: 'Dashboard', icon: <FiGrid className="w-4 h-4" />, public: false },
+  ]
+
+  const filteredLinks = navLinks.filter(link => link.public || user)
+
   return (
-    <header className='bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white shadow-xl sticky top-0 z-50'>
-      <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='flex items-center justify-between h-20'>
-          <Link to='/' className='flex items-center gap-2'>
-            <div className='w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg'>
-              MR
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-gray-950/80 backdrop-blur-md text-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-md shadow-purple-500/20 group-hover:scale-105 transition-transform duration-200">
+              <FaGlasses className="h-5 w-5 text-white" />
             </div>
-            <span className='text-2xl font-extrabold tracking-tight'>
+            <span className="font-display text-xl font-bold tracking-tight bg-gradient-to-r from-white via-gray-200 to-purple-400 bg-clip-text text-transparent">
               Meta Reviews
             </span>
           </Link>
-          
-          <nav className='hidden md:flex items-center gap-8'>
-            <Link 
-              to='/reviews' 
-              className='text-gray-300 hover:text-white font-medium transition-colors flex items-center gap-1'
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-1">
+            {filteredLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 hover:text-purple-400 ${
+                  isActive(link.to) ? 'text-purple-400' : 'text-gray-300'
+                }`}
+              >
+                {link.icon}
+                {link.label}
+                {isActive(link.to) && (
+                  <motion.div
+                    layoutId="activeNavIndicator"
+                    className="absolute bottom-0 left-4 right-4 h-0.5 bg-purple-500"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center gap-4">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg hover:bg-white/10 text-gray-300 hover:text-purple-400 transition-colors cursor-pointer"
+              aria-label="Toggle Theme"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              Reviews
-            </Link>
-            
+              {theme === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
+            </button>
+
             {user ? (
-              <>
-                <Link 
-                  to='/create-review' 
-                  className='text-gray-300 hover:text-white font-medium transition-colors flex items-center gap-1'
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Write Review
-                </Link>
-                
-                <Link 
-                  to='/my-reviews' 
-                  className='text-gray-300 hover:text-white font-medium transition-colors flex items-center gap-1'
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  My Reviews
-                </Link>
-                
-                <Link 
-                  to='/analytics' 
-                  className='text-gray-300 hover:text-white font-medium transition-colors flex items-center gap-1'
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                  Analytics
-                </Link>
-                
-                <Link 
-                  to='/dashboard' 
-                  className='text-gray-300 hover:text-white font-medium transition-colors flex items-center gap-1'
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2a2 2 0 01-2-2H4a2 2 0 01-2 2v-2a2 2 0 01-2-2v-2a2 2 0 012-2h2a2 2 0 012-2v-2a2 2 0 012-2h2a2 2 0 012-2v2z" />
-                  </svg>
-                  Dashboard
-                </Link>
-                
-                <div className="flex items-center gap-4 pl-4 border-l border-gray-700">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
-                      {user?.name?.charAt(0).toUpperCase() || 'U'}
-                    </div>
-                    <span className="hidden lg:block font-medium">
-                      {user?.name}
-                    </span>
+              <div className="flex items-center gap-3 border-l border-white/10 pl-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center font-semibold text-sm border border-purple-400/30">
+                    {user.name?.charAt(0).toUpperCase()}
                   </div>
-                  <button
-                    onClick={handleLogout}
-                    className='bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-red-900/30 transition-all duration-200'
-                  >
-                    Logout
-                  </button>
+                  <span className="text-sm font-medium text-gray-200 hidden lg:block">
+                    {user.name}
+                  </span>
                 </div>
-              </>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md shadow-purple-950/20 transition-all duration-200 hover:scale-105 cursor-pointer"
+                >
+                  <FiLogOut className="w-3.5 h-3.5" />
+                  Logout
+                </button>
+              </div>
             ) : (
-              <div className="flex items-center gap-4">
-                <Link 
-                  to='/login' 
-                  className='text-gray-300 hover:text-white font-medium transition-colors'
+              <div className="flex items-center gap-2 border-l border-white/10 pl-4">
+                <Link
+                  to="/login"
+                  className="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/5 transition-all"
                 >
                   Login
                 </Link>
                 <Link
-                  to='/register'
-                  className='bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-6 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-900/30 transition-all duration-200'
+                  to="/register"
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1.5 rounded-lg text-sm font-semibold shadow-md shadow-purple-950/20 transition-all hover:scale-105"
                 >
                   Get Started
                 </Link>
               </div>
             )}
-          </nav>
+          </div>
+
+          {/* Mobile Actions and Hamburger Toggle */}
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg hover:bg-white/10 text-gray-300 transition-colors cursor-pointer"
+            >
+              {theme === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
+            </button>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-lg hover:bg-white/10 text-gray-300 transition-colors cursor-pointer"
+            >
+              {isOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Drawer menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-t border-white/10 bg-gray-950/95 overflow-hidden"
+          >
+            <div className="px-4 py-4 space-y-2">
+              {filteredLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center gap-2.5 px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                    isActive(link.to)
+                      ? 'bg-purple-500/20 text-purple-400 border-l-2 border-purple-500'
+                      : 'text-gray-300 hover:bg-white/5'
+                  }`}
+                >
+                  {link.icon}
+                  {link.label}
+                </Link>
+              ))}
+
+              <div className="pt-4 border-t border-white/10 mt-4 space-y-3">
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 px-4 py-1">
+                      <div className="h-9 w-9 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center font-semibold text-sm">
+                        {user.name?.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold text-white">{user.name}</div>
+                        <div className="text-xs text-gray-400">{user.email}</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white py-2.5 rounded-lg text-sm font-semibold cursor-pointer"
+                    >
+                      <FiLogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      to="/login"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-center text-sm font-medium text-gray-300 hover:text-white py-2.5 rounded-lg bg-white/5"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white py-2.5 rounded-lg text-sm font-semibold"
+                    >
+                      Register
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   )
 }
