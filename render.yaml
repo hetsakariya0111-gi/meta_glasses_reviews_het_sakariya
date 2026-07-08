@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: meta-glasses-backend
+    env: node
+    plan: starter
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        fromDatabase:
+          name: meta-glasses-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+    autoDeploy: true
+
+databases:
+  - name: meta-glasses-db
+    databaseName: meta_glasses
+    user: meta_glasses_user
+    plan: starter
+
