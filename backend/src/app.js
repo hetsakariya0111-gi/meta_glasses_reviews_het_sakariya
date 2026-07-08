@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
@@ -34,6 +35,17 @@ app.get('/api/v1/health', (req, res) => {
 // Routes
 app.use('/api/v1/auth', require('./routes/authRoutes'));
 app.use('/api/v1/reviews', require('./routes/reviewRoutes'));
+app.use('/api/v1/stats', require('./routes/statsRoutes'));
+app.use('/api/v1/search', require('./routes/searchRoutes'));
+
+// Serve frontend build (production)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  });
+}
 
 // Error handling middleware
 app.use(notFound);

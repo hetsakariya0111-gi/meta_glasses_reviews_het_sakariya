@@ -1,9 +1,7 @@
 const User = require('../models/User');
+const Review = require('../models/Review');
 const sendToken = require('../utils/sendToken');
 
-// @desc    Register user
-// @route   POST /api/v1/auth/register
-// @access  Public
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -15,11 +13,7 @@ const register = async (req, res, next) => {
       throw new Error('User already exists');
     }
 
-    const user = await User.create({
-      name,
-      email,
-      password,
-    });
+    const user = await User.create({ name, email, password });
 
     if (user) {
       sendToken(user, 201, res);
@@ -32,9 +26,6 @@ const register = async (req, res, next) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/v1/auth/login
-// @access  Public
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -52,25 +43,62 @@ const login = async (req, res, next) => {
   }
 };
 
-// @desc    Get current user
-// @route   GET /api/v1/auth/me
-// @access  Private
 const getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
 
-    res.status(200).json({
-      success: true,
-      data: user,
-    });
+    res.status(200).json({ success: true, data: user });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Logout user
-// @route   GET /api/v1/auth/logout
-// @access  Public
+const getProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+
+    const { name, email } = req.body;
+    user.name = name || user.name;
+    user.email = email || user.email;
+    await user.save();
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({}).select('-password');
+    res.status(200).json({ success: true, count: users.length, data: users });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getUserReviews = async (req, res, next) => {
+  try {
+    const reviews = await Review.find({ name: req.params.name }).sort('-createdAt');
+    res.status(200).json({ success: true, count: reviews.length, data: reviews });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const logout = async (req, res, next) => {
   try {
     res.cookie('token', '', {
@@ -78,10 +106,7 @@ const logout = async (req, res, next) => {
       expires: new Date(0),
     });
 
-    res.status(200).json({
-      success: true,
-      message: 'Logged out',
-    });
+    res.status(200).json({ success: true, message: 'Logged out' });
   } catch (error) {
     next(error);
   }
@@ -91,5 +116,9 @@ module.exports = {
   register,
   login,
   getMe,
+  getProfile,
+  updateProfile,
+  getUsers,
+  getUserReviews,
   logout,
 };
