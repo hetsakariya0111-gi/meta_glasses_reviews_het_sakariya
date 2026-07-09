@@ -38,6 +38,19 @@ app.use(cookieParser());
 app.use(compression());
 app.use('/api', limiter);
 
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Welcome to Meta Glasses Reviews API! 🎉',
+    endpoints: {
+      health: '/api/v1/health',
+      auth: '/api/v1/auth',
+      reviews: '/api/v1/reviews',
+      stats: '/api/v1/stats',
+      search: '/api/v1/search'
+    }
+  });
+});
+
 app.get('/api/v1/health', (req, res) => {
   res.status(200).json({
     status: 'success',
