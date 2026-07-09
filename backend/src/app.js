@@ -58,12 +58,12 @@ if (process.env.NODE_ENV === 'production') {
   
   if (fs.existsSync(frontendDistPath)) {
     app.use(express.static(frontendDistPath));
-    app.get('*', (req, res) => {
+    app.get('/*', (req, res) => {
       res.sendFile(path.join(frontendDistPath, 'index.html'));
     });
   } else {
     // If frontend not built yet, just send API info
-    app.get('*', (req, res) => {
+    app.get('/*', (req, res) => {
       res.status(200).json({
         message: 'Meta Glasses Reviews API is running!',
         health: '/api/v1/health'
