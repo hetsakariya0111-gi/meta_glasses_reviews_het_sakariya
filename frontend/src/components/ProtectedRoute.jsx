@@ -1,14 +1,7 @@
-import { Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { Navigate, Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-const ProtectedRoute = ({ children }) => {
-  const { user } = useSelector((state) => state.auth)
-
-  if (!user) {
-    return <Navigate to='/login' replace />
-  }
-
-  return children
+export default function ProtectedRoute() {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 }
-
-export default ProtectedRoute

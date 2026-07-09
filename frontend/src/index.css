@@ -1,50 +1,88 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@theme {
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display: 'Plus Jakarta Sans', sans-serif;
+:root {
+  color-scheme: dark;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #04070d;
+  color: #f8fafc;
+  --bg-base: #04070d;
+  --bg-elevated: #0b1220;
+  --bg-soft: rgba(255, 255, 255, 0.04);
+  --border-soft: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
 }
 
-/* Custom Scrollbars in Stripe/Linear style */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #09090B;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: #09090B;
-  color: #FAFAFA;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, rgba(139, 92, 246, 0.14), transparent 28%), radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.16), transparent 26%), linear-gradient(135deg, #04070d 0%, #070b12 45%, #0c1421 100%);
+  color: var(--text-primary);
 }
 
-/* Minimal shimmer animation for loading state skeletons */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+* {
+  box-sizing: border-box;
 }
 
-.skeleton-shimmer {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.015) 25%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.015) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.8s infinite;
+button, input, select, textarea {
+  font: inherit;
+}
+
+h1, h2, h3 {
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+
+code, .font-mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.35);
+  color: white;
+}
+
+.page-shell {
+  border: 1px solid var(--border-soft);
+  background: radial-gradient(circle at top left, rgba(139, 92, 246, 0.14), transparent 30%), linear-gradient(135deg, rgba(7, 11, 18, 0.96), rgba(14, 22, 38, 0.96));
+  box-shadow: 0 40px 140px rgba(2, 8, 23, 0.42);
+  backdrop-filter: blur(24px);
+}
+
+.glass-card {
+  border: 1px solid var(--border-soft);
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+}
+
+.panel-card {
+  border: 1px solid var(--border-soft);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
+  box-shadow: 0 20px 60px rgba(2, 8, 23, 0.22);
+  backdrop-filter: blur(18px);
+}
+
+.soft-input {
+  border: 1px solid var(--border-soft);
+  background: rgba(6, 10, 18, 0.75);
+  color: var(--text-primary);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.soft-input::placeholder {
+  color: var(--text-muted);
+}
+
+.soft-label {
+  color: var(--text-secondary);
 }
