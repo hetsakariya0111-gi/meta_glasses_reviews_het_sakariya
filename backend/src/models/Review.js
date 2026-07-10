@@ -69,4 +69,5 @@ const ReviewSchema = new mongoose.Schema({
 ReviewSchema.index({ rating: 1, createdAt: -1 });
 ReviewSchema.index({ title: 'text', review: 'text', name: 'text', country: 'text' });
 
-module.exports = mongoose.model('Review', ReviewSchema);
+const collectionName = process.env.COLLECTION_NAME || 'reviews';
+module.exports = mongoose.model('Review', ReviewSchema, collectionName);

@@ -4,6 +4,11 @@ const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log(`Database: ${conn.connection.name}`);
+    
+    // List all collections for debugging
+    const collections = await conn.connection.db.listCollections().toArray();
+    console.log('Available Collections:', collections.map(c => c.name));
   } catch (error) {
     console.error(`Error: ${error.message}`);
     process.exit(1);
